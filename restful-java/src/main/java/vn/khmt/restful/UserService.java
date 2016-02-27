@@ -81,10 +81,12 @@ public class UserService {
     @GET
     @Path("/all")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<User> getUser (@HeaderParam(AUTHENTICATION)String authString) throws SQLException{
+    public Response getUser (@HeaderParam(AUTHENTICATION)String authString) throws SQLException{
         if (AuthenService.GetAllAuthenticate(authString, connectToSQL)){
             List<User> users=connectToSQL.getUserList();
-            return users;
+                            GenericEntity genericEntity = new GenericEntity<List<User>>(users){};
+                return Response.status(200).entity(genericEntity).build();
+            //return users;
         } else {
             return null;
         }

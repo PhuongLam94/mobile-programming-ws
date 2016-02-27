@@ -1,3 +1,7 @@
+vn\khmt\restful\COSRFilter.class
 vn\khmt\restful\User.class
 org\netbeans\rest\application\config\ApplicationConfig.class
 vn\khmt\restful\XinChaoService.class
+vn\khmt\restful\ConnectToSQL1.class
+vn\khmt\restful\UserService.class
+vn\khmt\restful\AuthenticationService.class

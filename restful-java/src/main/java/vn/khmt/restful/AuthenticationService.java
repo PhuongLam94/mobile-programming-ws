@@ -49,7 +49,6 @@ public class AuthenticationService {
     public boolean GetAllAuthenticate(String authString, ConnectToSQL1 dbConnection){
         String[] userPass = decode(authString);
         String[] result = dbConnection.checkUser(userPass[0], userPass[1]);
-        
         return result[1].equals("3");
     }
 }

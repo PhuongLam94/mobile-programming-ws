@@ -16,7 +16,7 @@ and open the template in the editor.
 
         <script src="bootstrap-3.3.6-dist/js/bootstrap.min.js"></script>
         <link rel="stylesheet" href="style.css">
-        
+
         <script>
             $().ready(function () {
                 //var users1 = [{id: "1", username: "phuonglam", name: "Lam Minh Phuong", email: "abc@example.com", status: "1"}, {id: "2",username: "huongnguyen", name: "Nguyen Thi Huong", email: "abc2@example.com", status: "1"}, {id: "3", username: "huela", name: "La Van Hue", email: "abc3@example.com", status: "1"}, {id: "4", username: "tienngo", name: "Ngo Thuy Tien", email: "abc4@example.com", status: "1"}];
@@ -26,96 +26,57 @@ and open the template in the editor.
 
                 $(document).ajaxStop(function () {
                     $("#loading-image").hide();
-
                 });
-                var returnToHomePage = function () {
-                    $("#title").html("List all users");
-                    $("#users").html("");
+                $("#btnSubmit").click(function (event) {
+                    event.preventDefault();
+                    var userData = {UserName: $("#username").val(), Email: $("#email").val(), Name: $("#name").val(), Password: $("#pwd").val(), Status: 1};
+                    console.log(userData);
                     $.ajax({
-                        url: "http://localhost:8080/restful/user/all",
-                        type: "GET",
+                        url: "http://localhost:8080/restful/user/add",
+                        type: "POST",
                         xhrFields: {
                             withCredentials: true
                         },
+                        content: JSON.stringify(userData),
                         beforeSend: function (xhr) {
                             xhr.setRequestHeader('Authorization', 'Basic ' + btoa('admin:admin'));
                         }
                     }).done(function (data) {
-                        var users = data;
-                        $.each(users, function (i, item) {
-                            var $user = $("<div/>", {
-                                id: "user" + item.userid,
-                                class: "user col-lg-offset-1 col-lg-4 alert alert-info"
-                            });
-                            $user.append($('<i class="fa fa-user">').text(" " + item.name));
-                            $user.append($("<br>"));
-                            $user.append($('<i class="fa fa-envelope">').text("     " + item.email));
-
-                            $user.append($("<button/>", {
-                                class: "btn btn-info col-lg-offset-10"
-                            }).text(" Detail"));
-
-                            $("#users").append($user);
-                        });
+                        console.log(data);
                     });
-                };
-                var goToUserId = function (id) {
-                    $("#title").html("User detail");
-                    $("#users").html("");
-                    var item;
-                    $.ajax({
-                        url: "http://localhost:8080/restful/user/" + id,
-                        type: "GET",
-                        xhrFields: {
-                            withCredentials: true
-                        },
-                        beforeSend: function (xhr) {
-                            xhr.setRequestHeader('Authorization', 'Basic ' + btoa('admin:admin'));
-
-                        }
-                    }).done(function (data) {
-                        item = data;
-                        var $user = $("<div/>", {
-                            id: "user-detail" + id,
-                            class: "user-detail col-lg-offset-1 col-lg-10 alert alert-info"
-                        });
-                        $user.append($('<i class="fa fa-street-view">').text("  " + item.username));
-                        $user.append($("<br>"));
-                        $user.append($('<i class="fa fa-user">').text("  " + item.name));
-                        $user.append($("<br>"));
-                        $user.append($('<i class="fa fa-envelope">').text("  " + item.email));
-                        $user.append($("<br>"));
-                        $user.append($('<i class="fa fa-heart">').text("  " + item.status));
-
-                        $user.append($("<button/>", {
-                            class: "btn btn-info col-lg-offset-11"
-                        }).text("Back"));
-                        $("#users").append($user);
-                    });
-
-                };
-                $("body").on("click", ".user button", function () {
-                    var id = $(this).parent().attr("id").replace("user", "") - 1;
-                    goToUserId(id);
                 });
-                $("body").on("click", ".user-detail button", function () {
-                    returnToHomePage();
-                });
-
-                returnToHomePage();
+                
             });
 
-
+            
         </script>
     </head>
     <body>
         <div class="container">
             <div class="jumbotron">
-                <h1 id="title"></h3>
+                <h3 id="title">Inscription</h3>
 
             </div>
-            <div id="users"></div>
-            <div  id="loading-image" align="center">
+            <form role="form">
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" class="form-control" id="name">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email address:</label>
+                    <input type="email" class="form-control" id="email">
+                </div>
+                <div class="form-group">
+                    <label for="username">User name:</label>
+                    <input type="text" class="form-control" id="username">
+                </div>
+                <div class="form-group">
+                    <label for="pwd">Password:</label>
+                    <input type="password" class="form-control" id="pwd">
+                </div>
+                <button class="btn btn-default" id="btnSubmit">Submit</button>
+            </form>
+            <div  id="loading-image" align="center" style="display: none">
                 <img style="height: 75px; width: 75px" alt="loading" src="Resource/loading_spinner.gif" />
             </div>
         </div>

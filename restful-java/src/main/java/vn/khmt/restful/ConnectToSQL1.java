@@ -31,7 +31,9 @@ public class ConnectToSQL1 {
     public static final String MYSQLDRIVER = "com.mysql.jdbc.Driver";
     public static final String POSTGRESQL = "postgresql";
     public static final String POSTGRESQLDRIVER = "org.postgresql.Driver";
-
+    public static final String SUCCESSFUL = "Successful";
+    public static final String USERNAMEEXIST = "Username existed";
+    public static final String EMAILEXIST = "Email existed";
     Connection dbConnection = null;
 
     public ConnectToSQL1(String type, String host, String dbname, String user, String pwd) {
@@ -63,17 +65,23 @@ public class ConnectToSQL1 {
         }
         return dbConnection;
     }
-    public boolean addUser(JSONObject userInfor) throws JSONException{
+    public String addUser(JSONObject userInfor) throws JSONException{
         try {
+            if (checkUserNameExist(userInfor.getString("UserName"))){
+                return USERNAMEEXIST;
+            }
+            if (checkEmailExist(userInfor.getString("Email"))){
+                return EMAILEXIST;
+            }
             String SQL = "INSERT INTO public.user(id, username, email, name, status, password) VALUES ('"+nextUserID()+"', '"+userInfor.getString("UserName")+"', '"+userInfor.getString("Email")+"', '"+userInfor.getString("Name")+"', '"+userInfor.getString("Status")+"', '"+userInfor.getString("Password")+"');";
             System.out.println(SQL);
             Statement stmt = this.dbConnection.createStatement();
             stmt.execute(SQL);
-            return true;
+            return SUCCESSFUL;
         } catch (SQLException ex) {
             Logger.getLogger(ConnectToSQL1.class.getName()).log(Level.SEVERE, null, ex);
+            return ERROR;
         }
-        return false;
     }
     public int nextUserID(){
         try {
@@ -198,5 +206,28 @@ public class ConnectToSQL1 {
         }
         return false;
     }
-
+    
+    private boolean checkUserNameExist(String username){
+        try{
+            String SQL = "SELECT * FROM public.user WHERE username='"+username+"';";
+            Statement stmt = this.dbConnection.createStatement();
+            ResultSet rs = stmt.executeQuery(SQL);
+            return rs.next();
+        } catch (SQLException ex) {
+            Logger.getLogger(ConnectToSQL1.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+    
+    private boolean checkEmailExist(String email){
+        try{
+            String SQL = "SELECT * FROM public.user WHERE email='"+email+"';";
+            Statement stmt = this.dbConnection.createStatement();
+            ResultSet rs = stmt.executeQuery(SQL);
+            return rs.next();
+        } catch (SQLException ex) {
+            Logger.getLogger(ConnectToSQL1.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
 }
